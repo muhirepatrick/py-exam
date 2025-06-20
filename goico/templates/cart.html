@@ -1,5 +1,94 @@
-<h1>Your Cart</h1>
-{% for item in items %}
-  <p>{{ item.name }} — {{ item.quantity }} × ${{ item.price }} = ${{ item.total_price }}</p>
-{% endfor %}
-<h3>Total: ${{ total }}</h3>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Your Cart</title>
+    <style>
+        .cart-item { border-bottom: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
+        .qty-btn { padding: 4px 8px; margin: 0 4px; }
+    </style>
+    <script>
+        function loadCart() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || {};
+            let container = document.getElementById("cart-items");
+            let total = 0;
+            container.innerHTML = '';
+
+            for (let id in cart) {
+                const item = cart[id];
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <h3>${item.name}</h3>
+                        <p>${item.description}</p>
+                        <p>Price: $${item.price.toFixed(2)}</p>
+                        <p>
+                            Quantity: 
+                            <button class="qty-btn" onclick="updateQuantity('${id}', -1)">−</button>
+                            ${item.quantity}
+                            <button class="qty-btn" onclick="updateQuantity('${id}', 1)">+</button>
+                        </p>
+                        <strong>Total: $${itemTotal.toFixed(2)}</strong>
+                    </div>
+                `;
+            }
+
+            document.getElementById("cart-total").innerText = '$' + total.toFixed(2);
+        }
+
+        function updateQuantity(id, change) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || {};
+            if (cart[id]) {
+                cart[id].quantity += change;
+                if (cart[id].quantity <= 0) {
+                    delete cart[id];
+                }
+                localStorage.setItem("cart", JSON.stringify(cart));
+                loadCart();
+            }
+        }
+
+        function clearCart() {
+            if (confirm("Are you sure you want to clear the cart?")) {
+                localStorage.removeItem("cart");
+                loadCart();
+            }
+        }
+
+        function checkout() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || {};
+            if (Object.keys(cart).length === 0) {
+                alert("Cart is empty!");
+                return;
+            }
+
+            let message = "Thanks for your order!\n\nItems:\n";
+            let total = 0;
+
+            for (let id in cart) {
+                const item = cart[id];
+                message += `- ${item.name} x ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}\n`;
+                total += item.price * item.quantity;
+            }
+
+            message += `\nTotal: $${total.toFixed(2)}\n\n(Checkout is currently demo-only)`;
+
+            alert(message);
+            localStorage.removeItem("cart");
+            loadCart();
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCart);
+    </script>
+</head>
+<body>
+    <h1>Your Cart</h1>
+    <div id="cart-items"></div>
+
+    <h2>Total: <span id="cart-total">$0.00</span></h2>
+
+    <button onclick="clearCart()">🗑 Clear Cart</button>
+    <button onclick="checkout()">✅ Checkout</button>
+</body>
+</html>

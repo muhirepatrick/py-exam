@@ -1,12 +1,56 @@
 {% load static %}
-<h1>Products</h1>
-{% for product in products %}
-  <div>
-    <img src="{{ product.image.url }}" width="100">
-    <h2>{{ product.name }}</h2>
-    <p>{{ product.description }}</p>
-    <p>{{ product.specifications }}</p>
-    <strong>${{ product.price }}</strong>
-    <a href="{% url 'add_to_cart' 'product' product.id %}">Add to Cart</a>
-  </div>
-{% endfor %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products</title>
+    <script>
+        // Add to cart logic
+        function addToCart(productId, name, price, description) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || {};
+            if (cart[productId]) {
+                cart[productId].quantity += 1;
+            } else {
+                cart[productId] = {
+                    name: name,
+                    price: price,
+                    quantity: 1,
+                    description: description,
+                };
+            }
+            localStorage.setItem("cart", JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || {};
+            let count = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById("cart-count").innerText = count;
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCartCount);
+    </script>
+</head>
+<body>
+<h1>
+    Products 
+    <span style="float:right;">
+        <a href="{% url 'cart' %}" style="text-decoration: none;">
+            🛒 Cart: <span id="cart-count">0</span>
+        </a>
+    </span>
+</h1>
+    {% for product in products %}
+      <div style="border: 1px solid #ccc; margin-bottom: 10px; padding: 10px;">
+        <img src="{{ product.image.url }}" width="100">
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <p>{{ product.specifications }}</p>
+        <strong>${{ product.price }}</strong><br>
+        <button onclick="addToCart('{{ product.id }}', '{{ product.name }}', {{ product.price }}, '{{ product.description|escapejs }}')">
+            Add to Cart
+        </button>
+      </div>
+    {% endfor %}
+</body>
+</html>
