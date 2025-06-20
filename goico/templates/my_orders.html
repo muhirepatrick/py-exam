@@ -93,11 +93,11 @@
                         <li>
                             <strong>{{ item.name }}</strong> —
                             Quantity: {{ item.quantity }} —
-                            Price: ${{ item.price }}
+                            Price: {{ item.price }} RWF
                         </li>
                     {% endfor %}
                 </ul>
-                <div class="total">Total: ${{ order.total_price }}</div>
+                <div class="total">Total: {{ order.total_price }} RWF</div>
             </div>
         {% endfor %}
     {% else %}

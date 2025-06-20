@@ -8,14 +8,14 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f6f9fc;
+            background-color:rgb(53, 66, 58);
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #0066cc;
-            color: white;
+            background-color:rgb(189, 128, 15);
+            color: black;
             padding: 20px;
             display: flex;
             justify-content: space-between;
@@ -84,7 +84,7 @@
         }
 
         .product-info button:hover {
-            background-color: #004999;
+            background-color:rgb(5, 100, 201);
         }
     </style>
     <script>
@@ -116,8 +116,8 @@
 <body>
 
 <header>
-    <h1>🛍️ Goico Products</h1>
-    <a href="{% url 'cart' %}">🛒 Cart: <span id="cart-count">0</span></a>
+    <h1>🛍️ Goico Products Selection</h1>
+    <a style ="color: green; background-color: white; padding: 10px; border-radius: 10px;" href="{% url 'cart' %}">🛒 Cart: <span id="cart-count">0</span></a>
 </header>
 
 <div class="container">
@@ -128,8 +128,8 @@
                 <h2>{{ product.name }}</h2>
                 <p>{{ product.description }}</p>
                 <p>{{ product.specifications }}</p>
-                <strong>${{ product.price }}</strong>
-                <button onclick="addToCart('{{ product.id }}', '{{ product.name }}', {{ product.price }}, '{{ product.description|escapejs }}')">
+                <strong>{{ product.price }} RWF</strong>
+                <button style = "background-color:rgb(189, 128, 15); " onclick="addToCart('{{ product.id }}', '{{ product.name }}', {{ product.price }}, '{{ product.description|escapejs }}')">
                     Add to Cart
                 </button>
             </div>

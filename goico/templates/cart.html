@@ -8,14 +8,14 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f6f9fc;
+            background-color: rgb(3, 42, 82);
             margin: 0;
             padding: 0;
         }
 
         header {
-            background-color: #0066cc;
-            color: white;
+            background-color:rgb(243, 171, 16);
+            color: black;
             padding: 20px;
             text-align: center;
         }
@@ -81,12 +81,12 @@
         }
 
         .action-buttons .clear {
-            background-color: #f44336;
+            background-color:rgb(236, 22, 7);
             color: white;
         }
 
         .action-buttons .checkout {
-            background-color: #4caf50;
+            background-color:rgb(243, 171, 16);
             color: white;
         }
 
@@ -105,10 +105,12 @@
     <div id="cart-items"></div>
 
     <div class="total-section">
-        <h2>Total: <span id="cart-total">$0.00</span></h2>
+        <h2  style="color: white" >Total: <span id="cart-total">0.00 rwf</span></h2>
     </div>
 
     <div class="action-buttons">
+        <a class = "checkout" style = " BACKGROUND-COLOR: GRAY;padding: 10px; text-decoration: none; border-radius: 5px;" href="{% url 'products' %}">BACK TO PRODUCT</a>
+
         <button class="clear" onclick="clearCart()">🗑 Clear Cart</button>
         <button class="checkout" onclick="checkout()">✅ Checkout</button>
     </div>
