@@ -56,29 +56,56 @@
             }
         }
 
-        function checkout() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || {};
-            if (Object.keys(cart).length === 0) {
-                alert("Cart is empty!");
-                return;
-            }
-
-            let message = "Thanks for your order!\n\nItems:\n";
-            let total = 0;
-
-            for (let id in cart) {
-                const item = cart[id];
-                message += `- ${item.name} x ${item.quantity} = $${(item.price * item.quantity).toFixed(2)}\n`;
-                total += item.price * item.quantity;
-            }
-
-            message += `\nTotal: $${total.toFixed(2)}\n\n(Checkout is currently demo-only)`;
-
-            alert(message);
-            localStorage.removeItem("cart");
-            loadCart();
+async function checkout() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || {};
+        if (Object.keys(cart).length === 0) {
+            alert("Cart is empty!");
+            return;
         }
 
+        let total = 0;
+        for (let id in cart) {
+            total += cart[id].price * cart[id].quantity;
+        }
+
+        const response = await fetch("{% url 'checkout_order' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                cart: cart,
+                total: total
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Order submitted successfully!");
+            localStorage.removeItem("cart");
+            loadCart();
+        } else {
+            alert("Error: " + result.error);
+        }
+    }
+
+    // CSRF helper (Django needs this!)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
         document.addEventListener("DOMContentLoaded", loadCart);
     </script>
 </head>

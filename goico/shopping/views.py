@@ -2,7 +2,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Product, Service, CartItem
+from .models import Product, Service, CartItem ,Order
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
+from django.http import JsonResponse
+import json
+
 
 def home(request):
     return render(request, 'home.html') 
@@ -72,3 +78,35 @@ def view_cart(request):
     items = CartItem.objects.all()
     total = sum([item.total_price() for item in items])
     return render(request, 'cart.html', {'items': items, 'total': total})
+
+
+
+@csrf_exempt  # if using fetch POST without CSRF token
+@login_required
+def checkout_order(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            cart = data.get('cart', {})
+            total = Decimal(str(data.get('total', 0)))
+
+            Order.objects.create(
+                customer=request.user,
+                products=json.dumps(cart),
+                total_price=total
+            )
+
+            return JsonResponse({'success': True, 'message': 'Order placed successfully'})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(customer=request.user).order_by('-created_at')
+    # Convert product JSON to Python dict for each order
+    for order in orders:
+        order.product_data = json.loads(order.products)
+    return render(request, 'my_orders.html', {'orders': orders})
