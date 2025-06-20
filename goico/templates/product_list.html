@@ -1,0 +1,12 @@
+{% load static %}
+<h1>Products</h1>
+{% for product in products %}
+  <div>
+    <img src="{{ product.image.url }}" width="100">
+    <h2>{{ product.name }}</h2>
+    <p>{{ product.description }}</p>
+    <p>{{ product.specifications }}</p>
+    <strong>${{ product.price }}</strong>
+    <a href="{% url 'add_to_cart' 'product' product.id %}">Add to Cart</a>
+  </div>
+{% endfor %}

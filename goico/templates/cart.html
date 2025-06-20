@@ -1,0 +1,5 @@
+<h1>Your Cart</h1>
+{% for item in items %}
+  <p>{{ item.name }} — {{ item.quantity }} × ${{ item.price }} = ${{ item.total_price }}</p>
+{% endfor %}
+<h3>Total: ${{ total }}</h3>
