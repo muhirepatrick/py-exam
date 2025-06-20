@@ -1,62 +1,170 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Your Cart</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        .cart-item { border-bottom: 1px solid #ddd; padding: 10px; margin-bottom: 10px; }
-        .qty-btn { padding: 4px 8px; margin: 0 4px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f6f9fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .cart-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        .cart-item h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .cart-item p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        .qty-btn {
+            padding: 5px 10px;
+            margin: 0 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #ddd;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .qty-btn:hover {
+            background-color: #bbb;
+        }
+
+        .total-section {
+            text-align: right;
+            font-size: 20px;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        .action-buttons {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .action-buttons button {
+            padding: 10px 18px;
+            font-size: 16px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .action-buttons .clear {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .action-buttons .checkout {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .action-buttons button:hover {
+            opacity: 0.9;
+        }
     </style>
-    <script>
-        function loadCart() {
-            const cart = JSON.parse(localStorage.getItem("cart")) || {};
-            let container = document.getElementById("cart-items");
-            let total = 0;
-            container.innerHTML = '';
+</head>
+<body>
 
-            for (let id in cart) {
-                const item = cart[id];
-                const itemTotal = item.price * item.quantity;
-                total += itemTotal;
+<header>
+    <h1>🛒 Your Cart</h1>
+</header>
 
-                container.innerHTML += `
-                    <div class="cart-item">
-                        <h3>${item.name}</h3>
-                        <p>${item.description}</p>
-                        <p>Price: $${item.price.toFixed(2)}</p>
-                        <p>
-                            Quantity: 
-                            <button class="qty-btn" onclick="updateQuantity('${id}', -1)">−</button>
-                            ${item.quantity}
-                            <button class="qty-btn" onclick="updateQuantity('${id}', 1)">+</button>
-                        </p>
-                        <strong>Total: $${itemTotal.toFixed(2)}</strong>
-                    </div>
-                `;
-            }
+<div class="container">
+    <div id="cart-items"></div>
 
-            document.getElementById("cart-total").innerText = '$' + total.toFixed(2);
+    <div class="total-section">
+        <h2>Total: <span id="cart-total">$0.00</span></h2>
+    </div>
+
+    <div class="action-buttons">
+        <button class="clear" onclick="clearCart()">🗑 Clear Cart</button>
+        <button class="checkout" onclick="checkout()">✅ Checkout</button>
+    </div>
+</div>
+
+<script>
+    function loadCart() {
+        const cart = JSON.parse(localStorage.getItem("cart")) || {};
+        let container = document.getElementById("cart-items");
+        let total = 0;
+        container.innerHTML = '';
+
+        for (let id in cart) {
+            const item = cart[id];
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            container.innerHTML += `
+                <div class="cart-item">
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                    <p>Price: $${item.price.toFixed(2)}</p>
+                    <p>
+                        Quantity:
+                        <button class="qty-btn" onclick="updateQuantity('${id}', -1)">−</button>
+                        ${item.quantity}
+                        <button class="qty-btn" onclick="updateQuantity('${id}', 1)">+</button>
+                    </p>
+                    <strong>Total: $${itemTotal.toFixed(2)}</strong>
+                </div>
+            `;
         }
 
-        function updateQuantity(id, change) {
-            let cart = JSON.parse(localStorage.getItem("cart")) || {};
-            if (cart[id]) {
-                cart[id].quantity += change;
-                if (cart[id].quantity <= 0) {
-                    delete cart[id];
-                }
-                localStorage.setItem("cart", JSON.stringify(cart));
-                loadCart();
-            }
-        }
+        document.getElementById("cart-total").innerText = '$' + total.toFixed(2);
+    }
 
-        function clearCart() {
-            if (confirm("Are you sure you want to clear the cart?")) {
-                localStorage.removeItem("cart");
-                loadCart();
+    function updateQuantity(id, change) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || {};
+        if (cart[id]) {
+            cart[id].quantity += change;
+            if (cart[id].quantity <= 0) {
+                delete cart[id];
             }
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCart();
         }
+    }
 
-async function checkout() {
+    function clearCart() {
+        if (confirm("Are you sure you want to clear the cart?")) {
+            localStorage.removeItem("cart");
+            loadCart();
+        }
+    }
+
+    async function checkout() {
         const cart = JSON.parse(localStorage.getItem("cart")) || {};
         if (Object.keys(cart).length === 0) {
             alert("Cart is empty!");
@@ -91,7 +199,6 @@ async function checkout() {
         }
     }
 
-    // CSRF helper (Django needs this!)
     function getCookie(name) {
         let cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -106,16 +213,9 @@ async function checkout() {
         }
         return cookieValue;
     }
-        document.addEventListener("DOMContentLoaded", loadCart);
-    </script>
-</head>
-<body>
-    <h1>Your Cart</h1>
-    <div id="cart-items"></div>
 
-    <h2>Total: <span id="cart-total">$0.00</span></h2>
+    document.addEventListener("DOMContentLoaded", loadCart);
+</script>
 
-    <button onclick="clearCart()">🗑 Clear Cart</button>
-    <button onclick="checkout()">✅ Checkout</button>
 </body>
 </html>

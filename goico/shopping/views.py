@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
 from django.http import JsonResponse
 import json
+from .forms import CustomerRegisterForm
 
 
 def home(request):
@@ -21,7 +22,6 @@ def register(request):
             user = form.save(commit=False)
             user.is_staff = False  # Not admin
             user.save()
-            messages.success(request, "Account created. You can now log in.")
             return redirect('login')
     else:
         form = CustomerRegisterForm()

@@ -4,10 +4,140 @@
 <head>
     <meta charset="UTF-8">
     <title>Goico Shopping</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header img {
+            height: 50px;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 20px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .hero {
+            padding: 80px 40px;
+            text-align: center;
+            background: linear-gradient(120deg, #ffffff, #e6f0ff);
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #003366;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .hero a.button {
+            padding: 12px 28px;
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .hero a.button:hover {
+            background-color: #004999;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 60px 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background: #003366;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to Goico Shopping!</h1>
-    <img src="{% static 'images/logo.jpeg' %}" alt="Logo">
+
+    <header>
+        <div>
+            <img src="{% static 'images/logo.jpeg' %}" alt="Goico Logo">
+        </div>
+        <nav>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'products' %}">Products</a>
+            <a href="{% url 'cart' %}">Cart</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'my_orders' %}">My Orders</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Goico Shopping</h1>
+        <p>Shop quality products and services with ease, anytime and anywhere.</p>
+        <a href="{% url 'products' %}" class="button">Shop Now</a>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Fast Delivery</h3>
+            <p>Get your products delivered to your door in no time.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Secure Payment</h3>
+            <p>Your transactions are safe and encrypted for your peace of mind.</p>
+        </div>
+        <div class="feature-card">
+            <h3>24/7 Support</h3>
+            <p>Need help? Our team is here for you anytime you need it.</p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2025 Goico Shopping — All Rights Reserved
+    </footer>
+
 </body>
 </html>
